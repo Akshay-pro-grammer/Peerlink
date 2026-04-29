@@ -12,6 +12,9 @@ public class Server {
     public Socket getClientSocket() {
         return clientSocket;
     }
+    public int getPort() {
+        return port;
+    }
 
     private BufferedReader reader;
     private PrintWriter writer;

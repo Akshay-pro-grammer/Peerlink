@@ -1,7 +1,7 @@
 package com.peerlink.multitask;
 
 import java.net.InetAddress;
-import java.util.Scanner;
+// import java.util.Scanner;
 
 import com.peerlink.session.SessionPayload;
 import com.peerlink.transport.UDPSender;
@@ -10,7 +10,7 @@ public class SenderThread extends Thread {
 
     private SessionPayload payload;
     private InetAddress remoteAddress;
-    private static final Scanner sc = new Scanner(System.in);
+    // private static final Scanner sc = new Scanner(System.in);
 
     public SenderThread(SessionPayload payload, InetAddress remoteAddress) {
         this.payload = payload;
@@ -24,13 +24,10 @@ public class SenderThread extends Thread {
 
         try {
             while (true) {
-                String message = sc.nextLine();
-
+                // String message = sc.nextLine();
+                String message = System.currentTimeMillis() + "";
                 sender.send(message, remoteAddress, payload.getVideoPort());
-
-                if ("bye".equals(message)) {
-                    break;
-                }
+                sleep(30);
             }
         } catch (Exception e) {
             e.printStackTrace();

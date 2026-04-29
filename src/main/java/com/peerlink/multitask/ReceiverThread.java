@@ -19,14 +19,9 @@ public class ReceiverThread extends Thread {
         try {
             while (true) {
                 String msg = receiver.receive();
+                Long timestamp=Long.parseLong(msg);
 
-                if (msg == null) continue;
-
-                System.out.println("Received: " + msg);
-
-                if ("bye".equals(msg)) {
-                    break;
-                }
+                System.out.println("Received: " + timestamp+" latency:"+(System.currentTimeMillis()-timestamp));
             }
         } catch (Exception e) {
             e.printStackTrace();
