@@ -1,6 +1,7 @@
 package com.peerlink.transport;
 
 import java.net.*;
+import java.util.regex.Pattern;
 
 public class UDPReceiver {
 
@@ -23,7 +24,7 @@ public class UDPReceiver {
             socket.receive(packet);
 
             String msgString = new String(packet.getData(), 0, packet.getLength());
-            String[] parts = msgString.split("\\|"); // escape the pipe for regex
+           String[] parts = msgString.split(Pattern.quote("|"));
             int seq = Integer.parseInt(parts[0]);
             int packetlost = 0;
             // Fix: always update lastseq
