@@ -17,7 +17,7 @@ public class UDPSender {
 
     public void send(String message, InetAddress address, int port) {
         try {
-            byte[] data = (seq+"|"+message).getBytes();
+            byte[] data = (seq++ + "|" + message).getBytes();
             DatagramPacket packet =
                     new DatagramPacket(data, data.length, address, port);
 

@@ -23,13 +23,15 @@ public class UDPReceiver {
             socket.receive(packet);
 
             String msgString = new String(packet.getData(), 0, packet.getLength());
-            String[] parts = msgString.split("|");
+            String[] parts = msgString.split("\\|"); // escape the pipe for regex
             int seq = Integer.parseInt(parts[0]);
             int packetlost = 0;
+            // Fix: always update lastseq
             if (lastseq + 1 == seq) {
                 lastseq = seq;
             } else {
-                packetlost = Math.abs(seq - lastseq);
+                packetlost = Math.abs(seq - lastseq) - 1; // -1 because gap is seq - lastseq - 1
+                lastseq = seq; // ← add this
             }
             return msgString + "|packetLost:" + packetlost;
 
