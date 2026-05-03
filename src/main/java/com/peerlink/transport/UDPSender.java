@@ -5,7 +5,7 @@ import java.net.*;
 public class UDPSender {
 
     private DatagramSocket socket;
-    static int seq=0;
+    private int seq = 0;   // instance-level (better than static)
 
     public UDPSender() {
         try {
@@ -17,11 +17,14 @@ public class UDPSender {
 
     public void send(String message, InetAddress address, int port) {
         try {
-            byte[] data = (seq++ + "|" + message).getBytes();
+            String payload = seq++ + "|" + message;
+
+            byte[] data = payload.getBytes();
             DatagramPacket packet =
                     new DatagramPacket(data, data.length, address, port);
 
             socket.send(packet);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

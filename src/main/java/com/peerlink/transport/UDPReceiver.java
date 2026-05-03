@@ -1,12 +1,11 @@
 package com.peerlink.transport;
 
 import java.net.*;
-import java.util.regex.Pattern;
 
 public class UDPReceiver {
 
     private DatagramSocket socket;
-    static int lastseq = -1;
+    private int lastSeq = -1;
 
     public UDPReceiver(int port) {
         try {
@@ -23,18 +22,42 @@ public class UDPReceiver {
 
             socket.receive(packet);
 
-            String msgString = new String(packet.getData(), 0, packet.getLength());
-           String[] parts = msgString.split(Pattern.quote("|"));
+            String msg = new String(packet.getData(), 0, packet.getLength());
+
+            String[] parts = msg.split("\\|");
+
             int seq = Integer.parseInt(parts[0]);
-            int packetlost = 0;
-            // Fix: always update lastseq
-            if (lastseq + 1 == seq) {
-                lastseq = seq;
-            } else {
-                packetlost = Math.abs(seq - lastseq) - 1; // -1 because gap is seq - lastseq - 1
-                lastseq = seq; // ← add this
+            long timestamp = Long.parseLong(parts[1]);
+
+            int packetLost = 0;
+            String status = "OK";
+
+            if (lastSeq == -1) {
+                // first packet
+                lastSeq = seq;
+            } 
+            else if (seq == lastSeq + 1) {
+                // perfect order
+                lastSeq = seq;
+            } 
+            else if (seq > lastSeq + 1) {
+                // packet loss
+                packetLost = seq - lastSeq - 1;
+                lastSeq = seq;
+                status = "LOSS";
+            } 
+            else {
+                // old or duplicate packet
+                status = "IGNORED";
+                return "SEQ:" + seq + " | " + status;
             }
-            return msgString + "|packetLost:" + packetlost;
+
+            long latency = System.currentTimeMillis() - timestamp;
+
+            return "SEQ:" + seq +
+                    " | latency:" + latency + " ms" +
+                    " | lost:" + packetLost +
+                    " | " + status;
 
         } catch (Exception e) {
             e.printStackTrace();
