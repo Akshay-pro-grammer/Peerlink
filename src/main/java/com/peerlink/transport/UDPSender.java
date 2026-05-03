@@ -5,6 +5,7 @@ import java.net.*;
 public class UDPSender {
 
     private DatagramSocket socket;
+    static int seq=0;
 
     public UDPSender() {
         try {
@@ -16,7 +17,7 @@ public class UDPSender {
 
     public void send(String message, InetAddress address, int port) {
         try {
-            byte[] data = message.getBytes();
+            byte[] data = (seq+"|"+message).getBytes();
             DatagramPacket packet =
                     new DatagramPacket(data, data.length, address, port);
 

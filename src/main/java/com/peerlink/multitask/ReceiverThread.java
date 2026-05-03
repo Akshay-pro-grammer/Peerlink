@@ -19,9 +19,9 @@ public class ReceiverThread extends Thread {
         try {
             while (true) {
                 String msg = receiver.receive();
-                Long timestamp=Long.parseLong(msg);
+                // Long timestamp=Long.parseLong(msg);
 
-                System.out.println("Received: " + timestamp+" latency:"+(System.currentTimeMillis()-timestamp));
+                System.out.println(msg);
             }
         } catch (Exception e) {
             e.printStackTrace();

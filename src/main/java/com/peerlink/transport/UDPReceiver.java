@@ -5,6 +5,7 @@ import java.net.*;
 public class UDPReceiver {
 
     private DatagramSocket socket;
+    static int lastseq = -1;
 
     public UDPReceiver(int port) {
         try {
@@ -17,12 +18,20 @@ public class UDPReceiver {
     public String receive() {
         try {
             byte[] buffer = new byte[65535];
-            DatagramPacket packet =
-                    new DatagramPacket(buffer, buffer.length);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             socket.receive(packet);
 
-            return new String(packet.getData(), 0, packet.getLength());
+            String msgString = new String(packet.getData(), 0, packet.getLength());
+            String[] parts = msgString.split("|");
+            int seq = Integer.parseInt(parts[0]);
+            int packetlost = 0;
+            if (lastseq + 1 == seq) {
+                lastseq = seq;
+            } else {
+                packetlost = Math.abs(seq - lastseq);
+            }
+            return msgString + "|packetLost:" + packetlost;
 
         } catch (Exception e) {
             e.printStackTrace();
